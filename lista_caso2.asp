@@ -49,6 +49,10 @@ case "Cliente"
 	sql = sql & " and UPPER(a.desNombre) like '%" & ucase(des_filtro) & "%'"
 case "Proveedor"
     sql = sql & " and a.idCaso in (select Caso_idCaso from servicio where desproveedor like '%"& ucase(des_filtro) &"%')"
+case "Ciudad"
+	sql = sql & " and UPPER(a.des_ciudad) like '%" & ucase(replace(trim(des_filtro),"'","''")) & "%'"
+case "Pais"
+	sql = sql & " and ltrim(rtrim(a.idPais)) in (select cast(codigo as varchar(20)) from pais where UPPER(nombre) like '%" & ucase(replace(trim(des_filtro),"'","''")) & "%')"
 end select
 
 if idStatus <> ""  then
@@ -161,6 +165,8 @@ end if
                   <input name="tip_filtro_busqueda" type="radio" value="Servicio" <%if titulo_grupo="Servicio" then%> checked <%end if%>  />Servicio
                   <input name="tip_filtro_busqueda" type="radio" value="Cliente" <%if titulo_grupo="Cliente" then%> checked <%end if%>  />Cliente
                   <input name="tip_filtro_busqueda" type="radio" value="Proveedor" <%if titulo_grupo="Proveedor" then%> checked <%end if%>  />Proveedor
+                  <input name="tip_filtro_busqueda" type="radio" value="Ciudad" <%if titulo_grupo="Ciudad" then%> checked <%end if%>  />Ciudad
+                  <input name="tip_filtro_busqueda" type="radio" value="Pais" <%if titulo_grupo="Pais" then%> checked <%end if%>  />Pa&iacute;s
                 </td>
                 <td width="10%" align="left">
                 <input type="text" name="des_filtro" size="15" value="<%=des_filtro%>" /></td>
