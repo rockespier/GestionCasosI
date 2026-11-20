@@ -321,17 +321,17 @@ var c = s.charAt(i);
                 <select name="tipoCaso" class="contenido_tabla1"  >
                 <option value="">[Seleccione]</option>
                     <option value="1" <%if tipoCaso="1" then %> selected="selected" <%end if%>>SIMPLE</option>
-                    <option value="2" <%if tipoCaso="2" then %> selected="selected" <%end if%>>MEDIUM</option>
-                    <option value="3" <%if tipoCaso="3" then %> selected="selected" <%end if%>>COMPLEX</option>
+                    <option value="2" <%if tipoCaso="2" then %> selected="selected" <%end if%>>URGENTE</option>
+                    <option value="3" <%if tipoCaso="3" then %> selected="selected" <%end if%>>VIP</option>
                 </select>
                 <%else
 					select case tipoCaso
 					case "1"
 						response.Write("SIMPLE")
 					case "2"
-					    response.Write("MEDIUM")
+					    response.Write("URGENTE")
 					case "3"
-					    response.Write("COMPLEX")
+					    response.Write("VIP")
 					end select	
 				%>                	
                 <%end if%>

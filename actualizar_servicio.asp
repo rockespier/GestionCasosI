@@ -1,5 +1,6 @@
 <%@LCID = 1034%>
 <!--#include file="main.asp"-->
+<!--#include file="combos.asp"-->
 <%
 Set rs = Server.CreateObject("ADODB.RECORDSET")
 
@@ -295,15 +296,15 @@ frm.proveedorservicioId.value= datos[3];
             <tr>
       <td>Deducible</td>
     <td><input type="text" name="impMontoDeducible" size="5" value="<%=replace(SiVacio(impMontoDeducible,0), ",", ".")%>"/>
-      <input type="text" name="MonedaDeducible" size=5 value="<%=MonedaDeducible%>" maxlength="10" /></td>
+      <%ComboMoneda "MonedaDeducible", MonedaDeducible%></td>
     <td>Garantia</td>
     <td><input type="text" name="impMontoGarantia" size="5"  value="<%=replace(impMontoGarantia, ",", ".")%>"/>
-      <input type="text" name="MonedaGarantia" value="<%=MonedaGarantia%>" size="5" maxlength="10" /></td>
+      <%ComboMoneda "MonedaGarantia", MonedaGarantia%></td>
    
     
     <td>Costo </td>
     <td><input type="text" name="impCosto" size="5" value="<%=replace(impCosto, ",", ".")%>"/>
-    		<input type="text" name="MonedaCosto" size="5" value="<%=MonedaCosto%>" maxlength="10" />
+    		<%ComboMoneda "MonedaCosto", MonedaCosto%>
     </td>
   </tr>
   <tr>
@@ -319,7 +320,7 @@ frm.proveedorservicioId.value= datos[3];
  <tr>
     <td>Servicio Solicitado</td>   
     <td>
-    <input name="desServicioSol" type="text" value="<%=desServicioSol%>" size="25" maxlength="40"/>    	
+    <%ComboServicioSolicitado "desServicioSol", desServicioSol%>
     </td>
     <td>Servicio Recibido</td>
     <td><input name="desServicioRec" type="text" value="<%=desServicioRec%>" size="25" maxlength="40"/>
