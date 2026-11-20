@@ -1,6 +1,10 @@
 <%@LCID = 1034%>
 <!--#include file="main.asp"-->
 <%
+Response.Expires = -1
+Response.AddHeader "Cache-Control", "no-cache, no-store, must-revalidate"
+Response.AddHeader "Pragma", "no-cache"
+
 Set rs = Server.CreateObject("ADODB.RECORDSET")
 
 idUsuarioCreador = request("idUsuarioCreador")
@@ -20,10 +24,41 @@ end if
 		tip_usuario = rs("tip_usuario")
 	end if	
 	cn.close
-	
+
+' RT-119: eliminar incidencia (borrado definitivo, solo administradores).
+' El perfil se valida con el usuario de la sesion, no con el de la URL.
+if Request.ServerVariables("REQUEST_METHOD") = "POST" and request("accion") = "eliminar" then
+	usuarioSesion = trim(session("codUsr") & "")
+	esAdmin = false
+	if usuarioSesion <> "" then
+		sql = " select tip_usuario from usuario where cod_usuario='"& replace(usuarioSesion,"'","''") &"' and est_activo='S'"
+		cn.open strUrl
+		rs.open sql, cn
+		if not rs.eof then
+			esAdmin = (trim(rs("tip_usuario")) = "A")
+		end if
+		rs.close()
+		cn.close
+	end if
+
+	if not esAdmin then
+		response.Write("No autorizado. Vuelva a ingresar al sistema con un usuario administrador.")
+		response.End()
+	end if
+
+	if isNumeric(idIncidencia) and idIncidencia <> "" then
+		sql = "delete from incidencia where idIncidencia=" & clng(idIncidencia) & " and Caso_idCaso=" & idCaso_bd
+		cn.open strUrl
+		cn.execute(sql)
+		cn.close
+	end if
+
+	response.Redirect("registro_incidencia.asp?idCaso="&idCaso_bd&"&idUsuarioCreador="&idUsuarioCreador&"")
+end if
+
 if Request.ServerVariables("REQUEST_METHOD") = "POST" then
 
-desIncidencia = trim(replace(request("desIncidencia"),chr(34),"''"))
+desIncidencia = trim(replace(request("desIncidencia"),"'","''"))
 fhrIncidencia = request("fhrIncidencia")
 horIncidencia = SiVacio(request("horIncidencia"),0) 
 minIncidencia = SiVacio(request("minIncidencia"),0)
@@ -57,7 +92,7 @@ minIncidencia = SiVacio(request("minIncidencia"),0)
 	
 end if
 
-	sql = "select idIncidencia,fhrIncidencia,cast(desIncidencia as nvarchar(1000)),horIncidencia,minIncidencia,fchCreacion,codUsuario"	
+	sql = "select idIncidencia,fhrIncidencia,cast(desIncidencia as nvarchar(4000)),horIncidencia,minIncidencia,fchCreacion,codUsuario"	
 	sql = sql & " from incidencia"
 	sql = sql & " where Caso_idCaso=" & idCaso_bd
 		sql = sql & " order by fchCreacion desc"
@@ -71,7 +106,7 @@ end if
 	cn.close
 	
 	if idIncidencia<>"" then
-		sql = "select cast(desIncidencia as nvarchar(1000)) ,horIncidencia,minIncidencia,fhrIncidencia,fchCreacion,codUsuario"	
+		sql = "select cast(desIncidencia as nvarchar(4000)) ,horIncidencia,minIncidencia,fhrIncidencia,fchCreacion,codUsuario"	
 		sql = sql & " from incidencia"
 		sql = sql & " where idIncidencia=" & idIncidencia
 	
@@ -99,9 +134,9 @@ end if
 <link type="text/css"rel="stylesheet"
      href="http://jquery-ui.googlecode.com/svn/tags/1.7/themes/redmond/jquery-ui.css" />   
   <script type="text/javascript"
-     src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+     src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
   <script type="text/javascript"
-     src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+     src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
   <script type="text/javascript">
       $(document).ready(function() {
           $('#fhrIncidencia').datepicker(
@@ -150,7 +185,7 @@ input.value = returnString;
     <td width="66%" valign="top" rowspan="2">
     <div style="width:100%; height:280px; overflow-y:auto;">
     	
-             <table width="600" border="0" align="center" cellpadding="1" cellspacing="1">
+             <table width="600" border="0" align="center" cellpadding="1" cellspacing="0" class="tabla_incidencias">
               <tr bgcolor="#FF4935">
                 <td align="center" class="titulo_tabla" width="60" style="border-right:#000 1px solid;border-left:#000 1px solid;">&nbsp;Id</td>      
                 <td align="center" class="titulo_tabla" width="70" style="border-right:#000 1px solid">&nbsp;Fecha</td>
@@ -158,15 +193,16 @@ input.value = returnString;
                 <td align="center" class="titulo_tabla" width="470" style="border-right:#000 1px solid">&nbsp;Detalle de Incidencia</td>
               </tr>
            <%if isArray(arrIncidencia) then
-		   colorfila = 0
 		   		for i=0 to ubound(arrIncidencia,2)
-				if colorfila = 0 then
-					color= "#FFFFFF"
+				if i mod 2 = 0 then
+					claseFila = "fila_par"
+				else
+					claseFila = "fila_impar"
 				end if
 				horas = right("00" & arrIncidencia(3,i),2)
 					minutos = right("00" & arrIncidencia(4,i),2)
-			%>   
-              <tr class="contenido_tabla1" bgcolor="<%=color%>">
+			%>
+              <tr class="contenido_tabla1 <%=claseFila%>">
                 <td align="center">
         <%if trim(tip_usuario)="A" then%>
 		<a href="actualizar_incidencia.asp?idIncidencia=<%=arrIncidencia(0,i)%>&idCaso=<%=idCaso%>&idUsuarioCreador=<%=idUsuarioCreador%>">
@@ -178,7 +214,7 @@ input.value = returnString;
                <!--<td>&nbsp;<%=FormateaFecha(arrIncidencia(1,i),"ddmmyyyy")%>&nbsp; <%=horas%>:<%=minutos%></td>-->
                <td><%=arrIncidencia(5,i)%></td>
                <td><%=arrIncidencia(6,i)%></td>               
-                <td>&nbsp;<%=arrIncidencia(2,i)%></td>
+                <td class="detalle_incidencia"><%=TextoHTML(arrIncidencia(2,i))%></td>
               </tr>
              <%
 			 	next
@@ -188,7 +224,7 @@ input.value = returnString;
             </div>
     </td>
     
-    <td colspan="2" valign="top"><textarea name="desincidencia" cols="40" rows="6" onblur="limpiar(this);"  style="width:100%" ><%=desIncidencia%></textarea></td>
+    <td colspan="2" valign="top"><textarea name="desincidencia" cols="40" rows="6" style="width:100%" ><%=TextoTextarea(desIncidencia)%></textarea></td>
   </tr>
   <tr>
    
@@ -207,6 +243,9 @@ input.value = returnString;
     -->
     </td>
     <td align="right">
+    <%if trim(tip_usuario)="A" and idIncidencia<>"" then%>
+    <input type="button" name="btnEliminar" value="Eliminar Incidencia" onclick="eliminarIncidencia();" />&nbsp;
+    <%end if%>
     <input type="submit" name="btnGrabar" value="Grabar Incidencia" />&nbsp;&nbsp;</td>
   </tr>  
 </table>
@@ -219,6 +258,15 @@ input.value = returnString;
    <input type="hidden" name="idCaso" value="<%=idCaso%>" />
    
       <input type="hidden" name="idIncidencia" value="<%=idIncidencia%>" />
+      <input type="hidden" name="accion" value="" />
   </form>
+<script type="text/javascript">
+function eliminarIncidencia() {
+	if (confirm('\u00bfEliminar definitivamente la incidencia <%=idIncidencia%>? Esta acci\u00f3n no se puede deshacer.')) {
+		document.frm.accion.value = 'eliminar';
+		document.frm.submit();
+	}
+}
+</script>
 </body>
 </html>

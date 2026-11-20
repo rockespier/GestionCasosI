@@ -81,9 +81,16 @@ font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	color: #000;
-	border:thin 1px #000;	
-	 
+	border:thin 1px #000;
+
 }
+
+/* RT-113: tabla de incidencias con separacion clara entre filas */
+.tabla_incidencias { border-collapse: collapse; table-layout: fixed; }
+.tabla_incidencias td { border: 1px solid #999; padding: 4px; vertical-align: top; }
+.tabla_incidencias tr.fila_par td { background-color: #FFFFFF; }
+.tabla_incidencias tr.fila_impar td { background-color: #F3F3F3; }
+.tabla_incidencias td.detalle_incidencia { word-wrap: break-word; overflow-wrap: break-word; }
 
 .contenido_tabla2 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;

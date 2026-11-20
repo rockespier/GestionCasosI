@@ -1,6 +1,11 @@
 <%@LCID = 1034%>
 <!--#include file="main.asp"-->
 <%
+' RT-112: que el navegador no muestre una version guardada de la lista
+Response.Expires = -1
+Response.AddHeader "Cache-Control", "no-cache, no-store, must-revalidate"
+Response.AddHeader "Pragma", "no-cache"
+
 Set rs = Server.CreateObject("ADODB.RECORDSET")
 
 idUsuarioCreador = request("idUsuarioCreador")
@@ -22,10 +27,13 @@ end if
 
 if Request.ServerVariables("REQUEST_METHOD") = "POST" then
 
-desIncidencia = trim(replace(request("desIncidencia"),chr(34),"''"))
+' Se escapan las comillas simples en el servidor (antes se borraban en el navegador)
+desIncidencia = trim(replace(request("desIncidencia"),"'","''"))
 fhrIncidencia = request("fhrIncidencia")
 horIncidencia = SiVacio(request("horIncidencia") ,0)
 minIncidencia = SiVacio(request("minIncidencia") ,0)
+
+if desIncidencia <> "" then
 
 'sql = "insert into incidencia(Caso_idCaso,fhrIncidencia,"
 'sql = sql & "desIncidencia,codUsuario,fchCreacion,horIncidencia,minIncidencia)"
@@ -40,21 +48,20 @@ sql = sql & "'"&desIncidencia&"','"&idUsuarioCreador&"',"&horIncidencia&","&minI
 cn.open strUrl
 cn.execute(sql)
 cn.close
-	idCaso = "00000" & idCaso
-	idCaso = Right(idCaso,5)
+end if
+
 '		sql = "insert into suceso(dessuceso,codusuario,idCaso) values('Incidencia registrada Caso NCA-"& idCaso &"','"&idUsuarioCreador&"','NCA-"&idCaso&"')"
 '		cn.open strUrl
 '		cn.execute(sql)
 '		cn.close()
-	
-	desIncidencia = ""
-	fhrIncidencia = ""
-	horIncidencia = "" 
-	minIncidencia = ""
-	
+
+	' RT-112: redirigir (POST/Redirect/GET) para que la lista se recargue limpia
+	' y un F5 no vuelva a enviar el formulario.
+	response.Redirect("registro_incidencia.asp?idCaso="&idCaso_bd&"&idUsuarioCreador="&Server.URLEncode(idUsuarioCreador))
+
 end if
 
-	sql = "select idIncidencia,fhrIncidencia,cast(desIncidencia as nvarchar(1000)) ,horIncidencia,minIncidencia,DATEADD(hh,-2,fchCreacion) fchCreacion,codUsuario"	
+	sql = "select idIncidencia,fhrIncidencia,cast(desIncidencia as nvarchar(4000)) ,horIncidencia,minIncidencia,DATEADD(hh,-2,fchCreacion) fchCreacion,codUsuario"	
 	sql = sql & " from incidencia"
 	sql = sql & " where Caso_idCaso=" & idCaso_bd
 	sql = sql & " order by fchCreacion desc"
@@ -77,9 +84,9 @@ end if
 <link type="text/css"rel="stylesheet"
      href="http://jquery-ui.googlecode.com/svn/tags/1.7/themes/redmond/jquery-ui.css" />   
   <script type="text/javascript"
-     src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+     src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
   <script type="text/javascript"
-     src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+     src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
   <script type="text/javascript">
       $(document).ready(function() {
           $('#fhrIncidencia').datepicker(
@@ -153,7 +160,7 @@ textarea.value=unescape(textarea.value); //decode all characters in text area ba
   <tr>
     <td width="66%" valign="top" rowspan="2">
      <div style="width:100%; height:280px; overflow-y:auto;">
-    	<table width="600" border="0" align="center" cellpadding="1" cellspacing="1">
+    	<table width="600" border="0" align="center" cellpadding="1" cellspacing="0" class="tabla_incidencias">
               <tr bgcolor="#FF4935">
                 <td align="center" class="titulo_tabla" width="60" style="border-right:#000 1px solid;border-left:#000 1px solid;">&nbsp;Id</td>      
                 <td align="center" class="titulo_tabla" width="70" style="border-right:#000 1px solid">&nbsp;Fecha</td>
@@ -161,16 +168,17 @@ textarea.value=unescape(textarea.value); //decode all characters in text area ba
                 <td align="center" class="titulo_tabla" width="470" style="border-right:#000 1px solid">&nbsp;Detalle de Incidencia</td>
               </tr>
            <%if isArray(arrIncidencia) then
-		   colorfila = 0
 		   		for i=0 to ubound(arrIncidencia,2)
-					if colorfila = 0 then
-				       color= "#FFFFFF"
+					if i mod 2 = 0 then
+						claseFila = "fila_par"
+					else
+						claseFila = "fila_impar"
 					end if
 					horas = right("00" & arrIncidencia(3,i),2)
 					minutos = right("00" & arrIncidencia(4,i),2)
-					
-			%>   
-              <tr class="contenido_tabla1" bgcolor="<%=color%>">
+
+			%>
+              <tr class="contenido_tabla1 <%=claseFila%>">
                 <td align="center">
         <%if trim(tip_usuario)="A" then%>
 		<a href="actualizar_incidencia.asp?idIncidencia=<%=arrIncidencia(0,i)%>&idCaso=<%=idCaso%>&idUsuarioCreador=<%=idUsuarioCreador%>">
@@ -182,7 +190,7 @@ textarea.value=unescape(textarea.value); //decode all characters in text area ba
                 <!-- <td>&nbsp;<%=FormateaFecha(arrIncidencia(1,i),"ddmmyyyy")%>&nbsp; <%=horas%>:<%=minutos%></td> -->
                 <td><%=arrIncidencia(5,i)%></td>
                 <td><%=arrIncidencia(6,i)%></td>
-                <td>&nbsp;<%=replace(arrIncidencia(2,i),vbCrLf,"<br>")%></td>
+                <td class="detalle_incidencia"><%=TextoHTML(arrIncidencia(2,i))%></td>
               </tr>
              <%
 			 	next
@@ -192,7 +200,7 @@ textarea.value=unescape(textarea.value); //decode all characters in text area ba
             </div>
     </td>
    
-    <td colspan="2" valign="top"><textarea name="desincidencia" cols="40" rows="6" onblur="limpiar(this);" style="width:100%"></textarea></td>
+    <td colspan="2" valign="top"><textarea name="desincidencia" cols="40" rows="6" style="width:100%"></textarea></td>
   </tr>
   <tr>
     
