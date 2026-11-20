@@ -250,8 +250,8 @@ input.value = returnString;
                 <select name="tipoCaso" class="contenido_tabla1" alerta="Seleccione tipo de caso">
                 <option value="">[Seleccione]</option>
                     <option value="1" <%if tipoCaso="1" then %> selected="selected" <%end if%>>SIMPLE</option>
-                    <option value="2" <%if tipoCaso="2" then %> selected="selected" <%end if%>>MEDIUM</option>
-                    <option value="3" <%if tipoCaso="3" then %> selected="selected" <%end if%>>COMPLEX</option>
+                    <option value="2" <%if tipoCaso="2" then %> selected="selected" <%end if%>>URGENTE</option>
+                    <option value="3" <%if tipoCaso="3" then %> selected="selected" <%end if%>>VIP</option>
                 </select>
                 </td>
                 <td>&nbsp;</td>

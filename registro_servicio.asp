@@ -1,5 +1,6 @@
 <%@LCID = 1034%>
 <!--#include file="main.asp"-->
+<!--#include file="combos.asp"-->
 <%
 on error resume next
 
@@ -286,16 +287,16 @@ function EnviarCorreo()
             <tr>
        
     <td>Deducible</td>
-    <td><input type="text" name="impMontoDeducible" size="5" value="0"/> <input type="text" name="MonedaDeducible" size=5 value="" maxlength="10" /></td>
+    <td><input type="text" name="impMontoDeducible" size="5" value="0"/> <%ComboMoneda "MonedaDeducible", ""%></td>
     <td>Garantia</td>
     <td><input type="text" name="impMontoGarantia" size="5" required />
-    <input type="text" name="MonedaGarantia" value="" size="5" maxlength="10" />      	
+    <%ComboMoneda "MonedaGarantia", ""%>
       </td>
    
     
     <td>Costo </td>
     <td><input type="text" name="impCosto" size="5"/>
-    <input type="text" name="MonedaCosto" size="5" value="" maxlength="10" />
+    <%ComboMoneda "MonedaCosto", ""%>
     </td>
   </tr>
   <tr>
@@ -316,7 +317,7 @@ function EnviarCorreo()
   <tr>
     <td>Servicio Solicitado</td>   
     <td>
-    	<input name="desServicioSol" type="text" value="<%=desServicioSol%>" size="25" maxlength="40"/>  
+    	<%ComboServicioSolicitado "desServicioSol", desServicioSol%>
     </td>
     <td>Servicio Recibido</td>
     <td>
