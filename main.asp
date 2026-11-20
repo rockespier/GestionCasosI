@@ -25,6 +25,34 @@ Function SiVacio(variable,valor)
 		SiVacio=variable
 End function
 
+' Escapa texto libre para mostrarlo en HTML conservando saltos de linea (RT-113).
+' No usa Server.HTMLEncode porque romperia los acentos (se guardan como bytes UTF-8).
+' Los <br> de registros antiguos se respetan.
+Function TextoHTML(texto)
+	Dim t
+	t = texto & ""
+	t = Replace(t, "&", "&amp;")
+	t = Replace(t, "<", "&lt;")
+	t = Replace(t, ">", "&gt;")
+	t = Replace(t, "&lt;br&gt;", "<br>", 1, -1, vbTextCompare)
+	t = Replace(t, "&lt;br/&gt;", "<br>", 1, -1, vbTextCompare)
+	t = Replace(t, "&lt;br /&gt;", "<br>", 1, -1, vbTextCompare)
+	t = Replace(t, vbCrLf, "<br>")
+	t = Replace(t, vbCr, "<br>")
+	t = Replace(t, vbLf, "<br>")
+	TextoHTML = t
+End Function
+
+' Escapa texto para meterlo dentro de un <textarea> (conserva saltos de linea).
+Function TextoTextarea(texto)
+	Dim t
+	t = texto & ""
+	t = Replace(t, "&", "&amp;")
+	t = Replace(t, "<", "&lt;")
+	t = Replace(t, ">", "&gt;")
+	TextoTextarea = t
+End Function
+
 Function FormateaFecha(fecha,formato)
 
 if fecha <>"" then

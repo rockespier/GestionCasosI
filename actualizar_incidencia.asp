@@ -1,6 +1,10 @@
 <%@LCID = 1034%>
 <!--#include file="main.asp"-->
 <%
+Response.Expires = -1
+Response.AddHeader "Cache-Control", "no-cache, no-store, must-revalidate"
+Response.AddHeader "Pragma", "no-cache"
+
 Set rs = Server.CreateObject("ADODB.RECORDSET")
 
 idUsuarioCreador = request("idUsuarioCreador")
@@ -54,7 +58,7 @@ end if
 
 if Request.ServerVariables("REQUEST_METHOD") = "POST" then
 
-desIncidencia = trim(replace(request("desIncidencia"),chr(34),"''"))
+desIncidencia = trim(replace(request("desIncidencia"),"'","''"))
 fhrIncidencia = request("fhrIncidencia")
 horIncidencia = SiVacio(request("horIncidencia"),0) 
 minIncidencia = SiVacio(request("minIncidencia"),0)
@@ -88,7 +92,7 @@ minIncidencia = SiVacio(request("minIncidencia"),0)
 	
 end if
 
-	sql = "select idIncidencia,fhrIncidencia,cast(desIncidencia as nvarchar(1000)),horIncidencia,minIncidencia,fchCreacion,codUsuario"	
+	sql = "select idIncidencia,fhrIncidencia,cast(desIncidencia as nvarchar(4000)),horIncidencia,minIncidencia,fchCreacion,codUsuario"	
 	sql = sql & " from incidencia"
 	sql = sql & " where Caso_idCaso=" & idCaso_bd
 		sql = sql & " order by fchCreacion desc"
@@ -102,7 +106,7 @@ end if
 	cn.close
 	
 	if idIncidencia<>"" then
-		sql = "select cast(desIncidencia as nvarchar(1000)) ,horIncidencia,minIncidencia,fhrIncidencia,fchCreacion,codUsuario"	
+		sql = "select cast(desIncidencia as nvarchar(4000)) ,horIncidencia,minIncidencia,fhrIncidencia,fchCreacion,codUsuario"	
 		sql = sql & " from incidencia"
 		sql = sql & " where idIncidencia=" & idIncidencia
 	
@@ -130,9 +134,9 @@ end if
 <link type="text/css"rel="stylesheet"
      href="http://jquery-ui.googlecode.com/svn/tags/1.7/themes/redmond/jquery-ui.css" />   
   <script type="text/javascript"
-     src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+     src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
   <script type="text/javascript"
-     src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+     src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
   <script type="text/javascript">
       $(document).ready(function() {
           $('#fhrIncidencia').datepicker(
@@ -181,7 +185,7 @@ input.value = returnString;
     <td width="66%" valign="top" rowspan="2">
     <div style="width:100%; height:280px; overflow-y:auto;">
     	
-             <table width="600" border="0" align="center" cellpadding="1" cellspacing="1">
+             <table width="600" border="0" align="center" cellpadding="1" cellspacing="0" class="tabla_incidencias">
               <tr bgcolor="#FF4935">
                 <td align="center" class="titulo_tabla" width="60" style="border-right:#000 1px solid;border-left:#000 1px solid;">&nbsp;Id</td>      
                 <td align="center" class="titulo_tabla" width="70" style="border-right:#000 1px solid">&nbsp;Fecha</td>
@@ -189,15 +193,16 @@ input.value = returnString;
                 <td align="center" class="titulo_tabla" width="470" style="border-right:#000 1px solid">&nbsp;Detalle de Incidencia</td>
               </tr>
            <%if isArray(arrIncidencia) then
-		   colorfila = 0
 		   		for i=0 to ubound(arrIncidencia,2)
-				if colorfila = 0 then
-					color= "#FFFFFF"
+				if i mod 2 = 0 then
+					claseFila = "fila_par"
+				else
+					claseFila = "fila_impar"
 				end if
 				horas = right("00" & arrIncidencia(3,i),2)
 					minutos = right("00" & arrIncidencia(4,i),2)
-			%>   
-              <tr class="contenido_tabla1" bgcolor="<%=color%>">
+			%>
+              <tr class="contenido_tabla1 <%=claseFila%>">
                 <td align="center">
         <%if trim(tip_usuario)="A" then%>
 		<a href="actualizar_incidencia.asp?idIncidencia=<%=arrIncidencia(0,i)%>&idCaso=<%=idCaso%>&idUsuarioCreador=<%=idUsuarioCreador%>">
@@ -209,7 +214,7 @@ input.value = returnString;
                <!--<td>&nbsp;<%=FormateaFecha(arrIncidencia(1,i),"ddmmyyyy")%>&nbsp; <%=horas%>:<%=minutos%></td>-->
                <td><%=arrIncidencia(5,i)%></td>
                <td><%=arrIncidencia(6,i)%></td>               
-                <td>&nbsp;<%=arrIncidencia(2,i)%></td>
+                <td class="detalle_incidencia"><%=TextoHTML(arrIncidencia(2,i))%></td>
               </tr>
              <%
 			 	next
@@ -219,7 +224,7 @@ input.value = returnString;
             </div>
     </td>
     
-    <td colspan="2" valign="top"><textarea name="desincidencia" cols="40" rows="6" onblur="limpiar(this);"  style="width:100%" ><%=desIncidencia%></textarea></td>
+    <td colspan="2" valign="top"><textarea name="desincidencia" cols="40" rows="6" style="width:100%" ><%=TextoTextarea(desIncidencia)%></textarea></td>
   </tr>
   <tr>
    
