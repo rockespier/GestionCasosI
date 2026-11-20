@@ -27,7 +27,7 @@ if Request.ServerVariables("REQUEST_METHOD") = "POST" and desProveedor<>"" then
 		textoEspecialidad  = Request.Form("textoEspecialidad"& i &"")			
 		
 			sql = "insert into proveedorxespecialidad "
-			sql = sql & " values("&idProveedor&",'"&idEspecialidadPro&"','"& textoEspecialidad &"','"& idUsuarioCreador &"',now())" 
+			sql = sql & " values("&idProveedor&",'"&idEspecialidadPro&"','"& textoEspecialidad &"','"& idUsuarioCreador &"',DATEADD(hour,-5,GETUTCDATE()))" 
 			cn.open strUrl
 			cn.execute(sql)
 			cn.close
@@ -38,7 +38,7 @@ if Request.ServerVariables("REQUEST_METHOD") = "POST" and desProveedor<>"" then
 		idEspecialidadPro = request.Form("idEspecialidadPro")
 		if idEspecialidadPro<>"" then
 			sql = "insert into proveedorxespecialidad "
-			sql = sql & " values("&idProveedor&",'"&idEspecialidadPro&"','','"& idUsuarioCreador &"',now())" 
+			sql = sql & " values("&idProveedor&",'"&idEspecialidadPro&"','','"& idUsuarioCreador &"',DATEADD(hour,-5,GETUTCDATE()))" 
 			cn.open strUrl
 			cn.execute(sql)
 			cn.close
@@ -57,7 +57,7 @@ if Request.ServerVariables("REQUEST_METHOD") = "POST" and desProveedor<>"" then
 	'Nuevo
 	sql = "insert into proveedor(desProveedor,idProveedorPadre,desArchivo,"
 	sql = sql & "estRegistro,cod_usuario,fchCreacion) "
-	sql = sql & " values('"&desProveedor&"','"&idProveedorPadre&"','','S','"&idUsuarioCreador&"',now())"
+	sql = sql & " values('"&desProveedor&"','"&idProveedorPadre&"','','S','"&idUsuarioCreador&"',DATEADD(hour,-5,GETUTCDATE()))"
 	cn.open strUrl
 	cn.execute(sql)
 	cn.close	

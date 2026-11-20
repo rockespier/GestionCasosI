@@ -67,7 +67,7 @@ if Request.ServerVariables("REQUEST_METHOD") = "POST" and request("txtModo")="OK
 			cn.execute(sql)
 			cn.close		
 			
-			sql = "insert into StatusxCaso values("&idStatus&","&idCaso_bd&",getdate(),'"&idUsuarioCreador&"','S');"
+			sql = "insert into StatusxCaso values("&idStatus&","&idCaso_bd&",DATEADD(hour,-5,GETUTCDATE()),'"&idUsuarioCreador&"','S');"
 			cn.open strUrl
 			cn.execute(sql)
 			cn.close			

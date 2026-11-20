@@ -26,3 +26,4 @@ Para probar localmente hace falta IIS con ASP Clásico habilitado y acceso a la 
 - Páginas usan `<%@LCID = 1034%>` (español) y `charset=utf-8`; respetar la codificación del archivo al editar (algunos tienen BOM).
 - Archivos `*_bkp.asp`, `*2.asp`, `index_original.htm`, `prueba.html`, `default.aspx` son copias/restos; confirmar cuál está en uso antes de editar.
 - `.user.ini` es config PHP del hosting, no la usa la app.
+- Fechas: el servidor está en EE. UU. Toda fecha "ahora" en SQL debe ser hora de Lima: usar `DATEADD(hour,-5,GETUTCDATE())`, nunca `getdate()`/`now()` (Perú no tiene horario de verano).

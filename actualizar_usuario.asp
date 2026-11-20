@@ -45,7 +45,7 @@ if Request.ServerVariables("REQUEST_METHOD") = "POST" then
 	if isArray(arrOpciones) then
 		for i=0 to ubound(arrOpciones)
 		strOpcion = arrOpciones(i)
-		strSql = " insert into accesos values('"& trim(cod_usuario) &"','" & trim(strOpcion) &"',getdate())"
+		strSql = " insert into accesos values('"& trim(cod_usuario) &"','" & trim(strOpcion) &"',DATEADD(hour,-5,GETUTCDATE()))"
 		cn.open strUrl
 		cn.execute(strSql)
 		cn.close

@@ -43,7 +43,7 @@ if desIncidencia <> "" then
 sql = "insert into incidencia(Caso_idCaso,"
 sql = sql & "desIncidencia,codUsuario,horIncidencia,minIncidencia,fchCreacion)"
 sql = sql & "values ("&idCaso_bd&","
-sql = sql & "'"&desIncidencia&"','"&idUsuarioCreador&"',"&horIncidencia&","&minIncidencia&",getdate())"
+sql = sql & "'"&desIncidencia&"','"&idUsuarioCreador&"',"&horIncidencia&","&minIncidencia&",DATEADD(hour,-5,GETUTCDATE()))"
 
 cn.open strUrl
 cn.execute(sql)
@@ -61,7 +61,7 @@ end if
 
 end if
 
-	sql = "select idIncidencia,fhrIncidencia,cast(desIncidencia as nvarchar(4000)) ,horIncidencia,minIncidencia,DATEADD(hh,-2,fchCreacion) fchCreacion,codUsuario"	
+	sql = "select idIncidencia,fhrIncidencia,cast(desIncidencia as nvarchar(4000)) ,horIncidencia,minIncidencia,fchCreacion,codUsuario"
 	sql = sql & " from incidencia"
 	sql = sql & " where Caso_idCaso=" & idCaso_bd
 	sql = sql & " order by fchCreacion desc"

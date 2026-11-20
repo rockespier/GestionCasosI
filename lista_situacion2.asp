@@ -29,7 +29,7 @@ if Request.ServerVariables("REQUEST_METHOD") = "POST" then
 		'Nuevo
 		sql = "insert into Status(desStatus,desIcono,numOrden,"
 		sql = sql & "estRegistro,codUsuario,fchCreacion) "
-		sql = sql & " values('"&desStatus&"','"&desIcono&"','"&numOrden&"','"&estRegistro&"','"&idUsuarioCreador&"',now())"
+		sql = sql & " values('"&desStatus&"','"&desIcono&"','"&numOrden&"','"&estRegistro&"','"&idUsuarioCreador&"',DATEADD(hour,-5,GETUTCDATE()))"
 		cn.open strUrl
 		cn.execute(sql)
 		cn.close	

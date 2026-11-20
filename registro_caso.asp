@@ -69,9 +69,9 @@ tip_usuario = request("tip_usuario")
   		sql = sql & "  desDireccion ,  idPais , idCiudad ,  des_ciudad ,"
   		sql = sql & "  idUsuarioCreador , fchCreacion, dia_nac, mes_nac, ano_nac )"
 		sql = sql & "  values ("
-		sql = sql & idEmpresa & "," & anioCaso & "," & tipoCaso & ",'" &idRefExterna &"',getdate(),'"
+		sql = sql & idEmpresa & "," & anioCaso & "," & tipoCaso & ",'" &idRefExterna &"',DATEADD(hour,-5,GETUTCDATE()),'"
 		sql = sql & desNombre &"','" & Nacimiento & "'," & edadTitular & ",'" & desTelefono &"','"& desDireccion & "',"
-		sql = sql & "'"& idPais & "'," & idCiudad & ",'" & des_ciudad &"','"& idUsuarioCreador &"',getdate(),"
+		sql = sql & "'"& idPais & "'," & idCiudad & ",'" & des_ciudad &"','"& idUsuarioCreador &"',DATEADD(hour,-5,GETUTCDATE()),"
 		sql = sql & "'" & dia_nac & "','" & mes_nac &"','"& ano_nac &"')"  
 		'response.Write(sql)
 		'response.End()
@@ -97,7 +97,7 @@ tip_usuario = request("tip_usuario")
 '		cn.execute(sql)
 '		cn.close()
 		
-		sql = "insert into StatusxCaso values(1,"&id&",getdate(),'"& idUsuarioCreador &"','S');"
+		sql = "insert into StatusxCaso values(1,"&id&",DATEADD(hour,-5,GETUTCDATE()),'"& idUsuarioCreador &"','S');"
 		cn.open strUrl
 		cn.execute(sql)
 		cn.close
