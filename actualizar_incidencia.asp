@@ -130,7 +130,7 @@ end if
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>::: Network Care Assist ::: </title>
-<LINK href="estilo.css" type=text/css rel=stylesheet>
+<LINK href="estilo.css?v=20261120" type=text/css rel=stylesheet>
 <link type="text/css"rel="stylesheet"
      href="http://jquery-ui.googlecode.com/svn/tags/1.7/themes/redmond/jquery-ui.css" />   
   <script type="text/javascript"
@@ -183,14 +183,14 @@ input.value = returnString;
           <table width="98%" border="0" cellspacing="1" cellpadding="1" class="contenido_tabla1">
   <tr>
     <td width="66%" valign="top" rowspan="2">
-    <div style="width:100%; height:280px; overflow-y:auto;">
+    <div style="width:100%; height:280px; overflow-y:auto; overflow-x:hidden;">
     	
-             <table width="600" border="0" align="center" cellpadding="1" cellspacing="0" class="tabla_incidencias">
+             <table width="100%" border="0" align="center" cellpadding="1" cellspacing="0" class="tabla_incidencias">
               <tr bgcolor="#FF4935">
-                <td align="center" class="titulo_tabla" width="60" style="border-right:#000 1px solid;border-left:#000 1px solid;">&nbsp;Id</td>      
-                <td align="center" class="titulo_tabla" width="70" style="border-right:#000 1px solid">&nbsp;Fecha</td>
-                <td align="center" class="titulo_tabla" width="70" style="border-right:#000 1px solid">&nbsp;Usuario</td>       
-                <td align="center" class="titulo_tabla" width="470" style="border-right:#000 1px solid">&nbsp;Detalle de Incidencia</td>
+                <td align="center" class="titulo_tabla" width="65" style="border-right:#000 1px solid;border-left:#000 1px solid;">&nbsp;Id</td>      
+                <td align="center" class="titulo_tabla" width="80" style="border-right:#000 1px solid">&nbsp;Fecha</td>
+                <td align="center" class="titulo_tabla" width="80" style="border-right:#000 1px solid">&nbsp;Usuario</td>       
+                <td align="center" class="titulo_tabla" style="border-right:#000 1px solid">&nbsp;Detalle de Incidencia</td>
               </tr>
            <%if isArray(arrIncidencia) then
 		   		for i=0 to ubound(arrIncidencia,2)

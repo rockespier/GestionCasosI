@@ -26,4 +26,5 @@ Para probar localmente hace falta IIS con ASP Clásico habilitado y acceso a la 
 - Páginas usan `<%@LCID = 1034%>` (español) y `charset=utf-8`; respetar la codificación del archivo al editar (algunos tienen BOM).
 - Archivos `*_bkp.asp`, `*2.asp`, `index_original.htm`, `prueba.html`, `default.aspx` son copias/restos; confirmar cuál está en uso antes de editar.
 - `.user.ini` es config PHP del hosting, no la usa la app.
+- CSS cacheado: las páginas en iframe no se recargan con Ctrl+F5. Al cambiar `estilo.css`, subir el `?v=` del `<LINK>` en las páginas afectadas (p. ej. `registro_incidencia.asp`, `actualizar_incidencia.asp`).
 - Fechas: el servidor está en EE. UU. Toda fecha "ahora" en SQL debe ser hora de Lima: usar `DATEADD(hour,-5,GETUTCDATE())`, nunca `getdate()`/`now()` (Perú no tiene horario de verano).
