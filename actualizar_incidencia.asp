@@ -20,7 +20,38 @@ end if
 		tip_usuario = rs("tip_usuario")
 	end if	
 	cn.close
-	
+
+' RT-119: eliminar incidencia (borrado definitivo, solo administradores).
+' El perfil se valida con el usuario de la sesion, no con el de la URL.
+if Request.ServerVariables("REQUEST_METHOD") = "POST" and request("accion") = "eliminar" then
+	usuarioSesion = trim(session("codUsr") & "")
+	esAdmin = false
+	if usuarioSesion <> "" then
+		sql = " select tip_usuario from usuario where cod_usuario='"& replace(usuarioSesion,"'","''") &"' and est_activo='S'"
+		cn.open strUrl
+		rs.open sql, cn
+		if not rs.eof then
+			esAdmin = (trim(rs("tip_usuario")) = "A")
+		end if
+		rs.close()
+		cn.close
+	end if
+
+	if not esAdmin then
+		response.Write("No autorizado. Vuelva a ingresar al sistema con un usuario administrador.")
+		response.End()
+	end if
+
+	if isNumeric(idIncidencia) and idIncidencia <> "" then
+		sql = "delete from incidencia where idIncidencia=" & clng(idIncidencia) & " and Caso_idCaso=" & idCaso_bd
+		cn.open strUrl
+		cn.execute(sql)
+		cn.close
+	end if
+
+	response.Redirect("registro_incidencia.asp?idCaso="&idCaso_bd&"&idUsuarioCreador="&idUsuarioCreador&"")
+end if
+
 if Request.ServerVariables("REQUEST_METHOD") = "POST" then
 
 desIncidencia = trim(replace(request("desIncidencia"),chr(34),"''"))
@@ -207,6 +238,9 @@ input.value = returnString;
     -->
     </td>
     <td align="right">
+    <%if trim(tip_usuario)="A" and idIncidencia<>"" then%>
+    <input type="button" name="btnEliminar" value="Eliminar Incidencia" onclick="eliminarIncidencia();" />&nbsp;
+    <%end if%>
     <input type="submit" name="btnGrabar" value="Grabar Incidencia" />&nbsp;&nbsp;</td>
   </tr>  
 </table>
@@ -219,6 +253,15 @@ input.value = returnString;
    <input type="hidden" name="idCaso" value="<%=idCaso%>" />
    
       <input type="hidden" name="idIncidencia" value="<%=idIncidencia%>" />
+      <input type="hidden" name="accion" value="" />
   </form>
+<script type="text/javascript">
+function eliminarIncidencia() {
+	if (confirm('\u00bfEliminar definitivamente la incidencia <%=idIncidencia%>? Esta acci\u00f3n no se puede deshacer.')) {
+		document.frm.accion.value = 'eliminar';
+		document.frm.submit();
+	}
+}
+</script>
 </body>
 </html>
