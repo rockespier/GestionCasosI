@@ -55,7 +55,7 @@ proveedorservicioId = request("proveedorservicioId")
 	sql = sql & "servicioId,servicioIdRecibido,ImpCostoDolares,proveedorservicioId"
 	sql = sql & ")"
 	sql = sql & "values ("&idCaso_bd&","&impmontogarantia&",'"&desproveedor&"',"&impcosto&",'"&FormateaFecha(fchatencion,"yyyymmdd") &"','"&desserviciosol
-	sql = sql &"','"&desserviciorec&"','"&idUsuarioCreador&"',getdate()"
+	sql = sql &"','"&desserviciorec&"','"&idUsuarioCreador&"',DATEADD(hour,-5,GETUTCDATE())"
 	if fchInformeMedico <> "" then
 	sql = sql & ",'"&FormateaFecha(fchInformeMedico,"yyyymmdd")&"'"
 	else
@@ -99,7 +99,7 @@ end if
 	sql = "select s.idServicio,s.fchatencion,s.desproveedor,s.fchInformeMedico,s.fchFactura,"
 	sql = sql & "s.caso_idcaso,s.fchcreacion,s.desserviciorec,s.codUsuario,s.MonedaDeducible,s.impMontoDeducible,RIGHT(year(s.fchcreacion),2),"
 	sql = sql & "empresacasodiasmax,empresacasoserviciomax," '12 13
-    sql = sql & "DATEDIFF ( day , c.fchcreacion , getdate() ) dif_day,"
+    sql = sql & "DATEDIFF ( day , c.fchcreacion , DATEADD(hour,-5,GETUTCDATE()) ) dif_day,"
 	sql = sql & " s.servicioId,s.servicioIdRecibido,s.ImpCostoDolares," '15 16 17
 	sql = sql & " (select servicioNombre from serviciocaso sc where sc.servicioId = s.servicioId ) des_servicioId,"
 	sql = sql & " (select servicioNombre from serviciocaso sc where sc.servicioId = s.servicioIdRecibido) des_servicioIdRecibido"
